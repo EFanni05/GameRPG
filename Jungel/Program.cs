@@ -1,6 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using Jungel;
-using System.Runtime.Intrinsics.X86;
 
 #region deffinion
 List<Player> player = new List<Player>(); 
@@ -234,8 +233,10 @@ static bool Stage1(List<Enemies> enemies, List<SpecialSkills> skills, List<Effec
             }
             else if (what == 2)     //Special
             {
-                if (SpecialAttack(player, skills, mosterHp, enemies, 1) == true)
+                string[] x = SpecialAttack(player, skills, mosterHp, enemies, 1);
+                if (x[0] == "true")
                 {
+                    mosterHp = int.Parse(x[1]);
                     playerTurn = true;
                 }
             }
@@ -383,8 +384,10 @@ static bool Stage2(List<Enemies> enemies, List<SpecialSkills> skills, List<Effec
                 }
                 else if (what == 2)     //Special
                 {
-                    if (SpecialAttack(player, skills, mosterHP[0], enemies, 1) == true)
+                    string[] x = SpecialAttack(player, skills, mosterHP[0], enemies, 1);
+                    if (x[0] == "true")
                     {
+                        mosterHP[0] = int.Parse(x[1]);
                         playerTrun = true;
                     }
                 }
@@ -432,8 +435,10 @@ static bool Stage2(List<Enemies> enemies, List<SpecialSkills> skills, List<Effec
                 }
                 else if (what == 2)     //Special
                 {
-                    if (SpecialAttack(player, skills, mosterHP[1], enemies, 1) == true)
+                    string[] x = SpecialAttack(player, skills, mosterHP[1], enemies, 1);
+                    if (x[0] == "true")
                     {
+                        mosterHP[1] = int.Parse(x[1]);
                         playerTrun = true;
                     }
                 }
@@ -565,9 +570,10 @@ static bool Stage3(List<Enemies> enemies, List<SpecialSkills> skills, List<Effec
             }
             else if (what == 2)     //Special
             {
-                //TODO: damage
-                if (SpecialAttack(player, skills, mosterHp, enemies, 2) == true)
+                string[] x = SpecialAttack(player, skills, mosterHp, enemies, 1);
+                if (x[0] == "true")
                 {
+                    mosterHp = int.Parse(x[1]);
                     playerTurn = true;
                 }
             }
@@ -712,8 +718,10 @@ static bool StageFinal(List<Enemies> enemies, List<SpecialSkills> skills, List<E
             }
             else if (what == 2)     //Special
             {
-                if (SpecialAttack(player, skills, mosterHp, enemies, 3) == true)
+                string[] x = SpecialAttack(player, skills, mosterHp, enemies, 1);
+                if (x[0] == "true")
                 {
+                    mosterHp = int.Parse(x[1]);
                     playerTurn = true;
                 }
             }
@@ -851,7 +859,7 @@ static int RegualAttack(List<Player> player, List<Items> items, int mosterHp, Li
     return mosterHp;
 }
 
-static bool SpecialAttack(List<Player> player, List<SpecialSkills> skills, int mosterHp, List<Enemies> enemies, int mosterIndex)
+static string[] SpecialAttack(List<Player> player, List<SpecialSkills> skills, int mosterHp, List<Enemies> enemies, int mosterIndex)
 {
     //menu
     Console.ForegroundColor = ConsoleColor.DarkGray;
@@ -873,7 +881,7 @@ static bool SpecialAttack(List<Player> player, List<SpecialSkills> skills, int m
 
 ");
     Console.ForegroundColor = ConsoleColor.White;
-    bool chooseAttack = true;
+    string[] chooseAttack = {"true" , "0"};
     Console.WriteLine("What are you going to do?");
     int.TryParse(Console.ReadLine(), out int choose);
     if (choose == 1)    //healing
@@ -982,11 +990,12 @@ static bool SpecialAttack(List<Player> player, List<SpecialSkills> skills, int m
         if (player[0].Ap > skills.Find(x => x.Index == choose).Ap)
         {
             mosterHp -= skills.First(x => x.Index == choose).Done;
-            
+            chooseAttack[1] = mosterHp.ToString();
             player[0].Ap += skills.Find(x => x.Index == choose).Ap;
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine($"{skills.Find(x => x.Index == choose).sceern} remaining AP: {player[0].Ap}");
             Console.ForegroundColor = ConsoleColor.White;
+
         }
         else
         {
@@ -1015,7 +1024,7 @@ static bool SpecialAttack(List<Player> player, List<SpecialSkills> skills, int m
     else if (choose == 9)
     {
         Console.WriteLine("You didn't use special attack!");
-        chooseAttack = false;
+        chooseAttack[0] = "false";
     }
     return chooseAttack;
 }
